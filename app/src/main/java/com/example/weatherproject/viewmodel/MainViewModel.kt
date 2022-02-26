@@ -13,20 +13,21 @@ class MainViewModel(private val liveDataToObserve: MutableLiveData<AppState> = M
 
     fun getLiveData() = liveDataToObserve  //возвращаем наблюдаемый объект
 
-    fun getWeatherFromLocal()= getDataFromLocalSource()
-    fun getWeatherFromRemote()= getDataFromLocalSource()
+    fun getWeatherFromLocal(isRus : Boolean)= getDataFromLocalSource(isRus)
+    //fun getWeatherFromRemote()= getDataFromLocalSource()
 
     //Запрос данных о погоде
-    private fun getDataFromLocalSource() {
+    private fun getDataFromLocalSource(isRus : Boolean) {
         //Перез запуском запроса меняем статус наблюдаемого объекта в "загружаем"
-        liveDataToObserve.value = AppState.Loading
+        //liveDataToObserve.value = AppState.Loading
+        liveDataToObserve.postValue(AppState.Loading)
         Thread {
             sleep(1000)
             //при успехе меняем статус наблюдаемого объекта в успех
             //и передаем туда полученные данные
-            if (Random.nextBoolean())
-              liveDataToObserve.postValue(AppState.Success(repositoryImpl.getWeatherFromLocalStorage()))
-            else liveDataToObserve.postValue(AppState.Error(Throwable()))
+            //if (Random.nextBoolean())
+              liveDataToObserve.postValue(AppState.Success(repositoryImpl.getWeatherFromLocalStorageAll(isRus)))
+           // else liveDataToObserve.postValue(AppState.Error(Throwable()))
         }.start()
     }
 }
