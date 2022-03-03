@@ -17,27 +17,18 @@ class RepositoryImpl():Repository {
             Weather(City("Пермь"),-1,0),
             Weather(City("Астрахань"),12,15),
             Weather(City("Архангельск"),-5,-10),
-            Weather(City("Брянск"),3,4)
+            Weather(City("Брянск"),3,4),
+            Weather(City("Иркутск"),-5,-3)
         )
         wetherList_world = listOf(
             Weather(City("Гавана"),25,30),
             Weather(City("Каракас"),31,35),
             Weather(City("Мехико"),27,25),
         )
-
     }
 
-//    override fun getWeatherFromServer(): Weather {
-//        return Weather() //создаем и возвращаем клас с дефолтн. значениями
-//    }
-
-//    override fun getWeatherFromLocalStorage(): Weather {
-//        //Возвращаем запрошенные данные, пока рандом
-//        return wetherList.get(Random.nextInt(wetherList.size-1))
-//    }
-
-    override fun getWeatherFromLocalStorageAll(isRus : Boolean): List<Weather> {
-        return if (isRus) wetherList_rus
+    override fun getWeatherFromLocalStorageAll(isRus : Boolean)=
+        if (isRus) wetherList_rus
         else wetherList_world
-    }
+
 }

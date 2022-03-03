@@ -9,8 +9,6 @@ data class Weather(
     val temperature: Int = 0,
     val feelsLike: Int = 0) : Parcelable
 
-    fun getDefaultCity():City{
-        return City("Москва",55.755826, 37.617299900000035)
-    }
+    fun getDefaultCity() = City("Москва",55.755826, 37.617299900000035)
 
 

@@ -19,16 +19,14 @@ class MainFragment : Fragment() {
     private val binding get() = _binding!!
     private val adapter = MainFragmentAdapter(object : OnItemViewClickListener{
         override fun onItemViewClick(weather: Weather) {
-            val manager = activity?.supportFragmentManager
-            if (manager != null){
-                val bundle = Bundle()
-                bundle.putParcelable(DetailFragment.BUNDLE_EXTRA, weather)
-                manager.beginTransaction()
-                    .add(R.id.container, DetailFragment.newInstance(bundle))
+            activity?.supportFragmentManager?.apply {
+                this.beginTransaction()
+                    .add(R.id.container, DetailFragment.newInstance(Bundle().apply {
+                        putParcelable(DetailFragment.BUNDLE_EXTRA, weather)
+                    }))
                     .addToBackStack("")
                     .commitAllowingStateLoss()
             }
-
         }
     })
     private var isRus = true
@@ -37,7 +35,6 @@ class MainFragment : Fragment() {
     companion object {
         fun newInstance() = MainFragment()
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,25 +51,24 @@ class MainFragment : Fragment() {
         binding.mainFragmentFAB.setOnClickListener{
             changeWeatherDataSet()
         }
-
-
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        val observer = Observer<AppState> {
-            renderData(it)
-        }
-        viewModel.getLiveData().observe(viewLifecycleOwner, observer)
+//        val observer = Observer<AppState> {
+//            renderData(it)
+//        }
+//        //viewModel.getLiveData().observe(viewLifecycleOwner, observer)
+        viewModel.liveDataToObserve.observe(viewLifecycleOwner, Observer { renderData(it) })
         viewModel.getWeatherFromLocal(isRus)
     }
 
-    private fun changeWeatherDataSet() {
+    private fun changeWeatherDataSet() =
         if (isRus) {
             binding.mainFragmentFAB.setImageResource(R.drawable.ic_earth)
         } else {
             binding.mainFragmentFAB.setImageResource(R.drawable.ic_russia)
+        }.let {
+            isRus = !isRus
+            viewModel.getWeatherFromLocal(isRus)
         }
-        isRus = !isRus
-        viewModel.getWeatherFromLocal(isRus)
-    }
 
     private fun renderData(appState: AppState) {
         when (appState) {
@@ -93,7 +89,6 @@ class MainFragment : Fragment() {
                     .show()
             }
         }
-
     }
 
     interface OnItemViewClickListener {

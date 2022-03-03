@@ -7,7 +7,7 @@ import com.example.weatherproject.model.RepositoryImpl
 import java.lang.Thread.sleep
 import kotlin.random.Random
 
-class MainViewModel(private val liveDataToObserve: MutableLiveData<AppState> = MutableLiveData(),
+class MainViewModel(val liveDataToObserve: MutableLiveData<AppState> = MutableLiveData(),
                     private val repositoryImpl: Repository = RepositoryImpl()
 ) : ViewModel() {
 
