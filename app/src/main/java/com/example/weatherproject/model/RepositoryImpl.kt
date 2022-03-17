@@ -10,20 +10,20 @@ class RepositoryImpl():Repository {
 
     init {
         wetherList_rus = listOf(
-            Weather(City("Саранск"),-1,-5),
+            Weather(City("Саранск",54.1838, 45.1749),-1,-5),
             Weather(),
-            Weather(City("Омск"),1,7),
-            Weather(City("Воронеж"),7,10),
-            Weather(City("Пермь"),-1,0),
-            Weather(City("Астрахань"),12,15),
-            Weather(City("Архангельск"),-5,-10),
-            Weather(City("Брянск"),3,4),
-            Weather(City("Иркутск"),-5,-3)
+            Weather(City("Омск",54.9924, 73.3686),1,7),
+            Weather(City("Воронеж",51.672, 39.1843),7,10),
+            Weather(City("Пермь",58.0105, 56.2502),-1,0),
+            Weather(City("Астрахань",46.3497, 48.0408),12,15),
+            Weather(City("Архангельск",64.5401, 40.5433),-5,-10),
+            Weather(City("Брянск",53.2521, 34.3717),3,4),
+            Weather(City("Иркутск",52.2978, 104.296),-5,-3)
         )
         wetherList_world = listOf(
-            Weather(City("Гавана"),25,30),
-            Weather(City("Каракас"),31,35),
-            Weather(City("Мехико"),27,25),
+            Weather(City("Гавана",23.133,-82.383),25,30),
+            Weather(City("Каракас",10.488,-66.8792),31,35),
+            Weather(City("Мехико",19.43261, -99.13321),27,25),
         )
     }
 

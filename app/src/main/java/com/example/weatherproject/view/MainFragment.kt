@@ -55,7 +55,6 @@ class MainFragment : Fragment() {
 //        val observer = Observer<AppState> {
 //            renderData(it)
 //        }
-//        //viewModel.getLiveData().observe(viewLifecycleOwner, observer)
         viewModel.liveDataToObserve.observe(viewLifecycleOwner, Observer { renderData(it) })
         viewModel.getWeatherFromLocal(isRus)
     }
@@ -73,10 +72,8 @@ class MainFragment : Fragment() {
     private fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Success -> {
-                //при успехе обновляем отображение информации
-               adapter.setWeather(appState.weatherList)
+                adapter.setWeather(appState.weatherList)
                 binding.mainFragmentLoadingLayout.visibility = View.GONE
-                //Snackbar.make(binding.root, "Success", Snackbar.LENGTH_LONG).show()
             }
             is AppState.Loading -> {
                 binding.mainFragmentLoadingLayout.visibility = View.VISIBLE

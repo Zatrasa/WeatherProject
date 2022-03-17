@@ -1,5 +1,6 @@
 package com.example.weatherproject.view
 
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,8 +39,10 @@ class MainFragmentAdapter(private var onItemViewClickListener: MainFragment.OnIt
     inner class MainViewHolder(view: View) : RecyclerView.ViewHolder(view){
         fun bind(weather: Weather) {
             itemView.findViewById<TextView>(R.id.cityNameText_item).setText(weather.city.city)
-            itemView.findViewById<TextView>(R.id.cityTemp_item).setText("Температура ${weather.temperature}")
-            itemView.findViewById<TextView>(R.id.cityImgTemp_item).setText("Ощущается как ${weather.feelsLike}")
+            itemView.findViewById<TextView>(R.id.cityTemp_item).setText(String.format(
+                "lt: %s",weather.city.lat.toString()))
+            itemView.findViewById<TextView>(R.id.cityImgTemp_item).setText(String.format(
+                "ln: %s",weather.city.lon.toString()))
             itemView.setOnClickListener {
                 onItemViewClickListener?.onItemViewClick(weather)
             }

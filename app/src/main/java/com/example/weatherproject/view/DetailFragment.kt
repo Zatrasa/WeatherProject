@@ -10,7 +10,10 @@ import androidx.lifecycle.Observer
 import com.example.weatherproject.R
 import com.example.weatherproject.databinding.DetailFragmentBinding
 import com.example.weatherproject.model.Weather
+import com.example.weatherproject.viewmodel.AppState
 import com.example.weatherproject.viewmodel.DetailViewModel
+import com.google.android.material.snackbar.Snackbar
+
 
 class DetailFragment : Fragment() {
 
@@ -29,22 +32,44 @@ class DetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
-        viewModel.weather.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                binding.cityName.text = it.city.city
-                binding.cityCoordinates.text = String.format(
-                    getString(R.string.city_coordinates),
-                    it.city.lat.toString(),
-                    it.city.lon.toString()
-                )
-                binding.temperatureValue.text = it.temperature.toString()
-                binding.feelsLikeValue.text = it.feelsLike.toString()
-            }
+        viewModel.liveDataToObserve.observe(viewLifecycleOwner, Observer {
+            renderData(it)
         })
         arguments?.getParcelable<Weather>(BUNDLE_EXTRA)?.let {
-            viewModel.setWeather(it)
+            viewModel.loadWeather(it)
+            viewModel.getWeatherFromRemote()
         }
     }
+
+    private fun renderData(appState: AppState) {
+        when (appState) {
+            is AppState.SuccessCity -> {
+                with(binding) {
+                    weatherCondition.text = appState.weather.condition.toString()
+                    temperatureValue.text = appState.weather.temperature.toString()
+                    feelsLikeValue.text = appState.weather.feelsLike.toString()
+                    cityName.text = appState.weather.city.city.toString()
+                    cityCoordinates.text = String.format(
+                        getString(R.string.city_coordinates),
+                        appState.weather.city.lat.toString(),
+                        appState.weather.city.lon.toString()
+                    )
+                    detailFragmentLoadingLayout.visibility = View.GONE
+                }
+            }
+            is AppState.Loading -> {
+                binding.detailFragmentLoadingLayout.visibility = View.VISIBLE
+            }
+            is AppState.Error -> {
+                binding.detailFragmentLoadingLayout.visibility = View.GONE
+                Snackbar
+                    .make(binding.root, "Error", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Reload") { viewModel.getWeatherFromRemote()}
+                    .show()
+            }
+        }
+    }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View {
@@ -56,4 +81,7 @@ class DetailFragment : Fragment() {
         super.onDestroyView()
         _binding=null
     }
+
+
+
 }
