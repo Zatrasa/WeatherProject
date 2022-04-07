@@ -8,5 +8,5 @@ sealed class AppState{
     data class Success(val weatherList: List<Weather>): AppState()
     data class SuccessCity(val weather: Weather): AppState()
     object Loading: AppState() //Состояние грузим данные
-    data class Error(val error : Throwable): AppState() //Состояние ошибка, в котором нужно будет хранить описание ошибки
+    data class Error(val error : String): AppState() //Состояние ошибка, в котором нужно будет хранить описание ошибки
 }

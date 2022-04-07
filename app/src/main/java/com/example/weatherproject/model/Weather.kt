@@ -8,7 +8,7 @@ data class Weather(
     val city: City = getDefaultCity(),
     var temperature: Int = 0,
     var feelsLike: Int = 0,
-    var condition: String = "" ) : Parcelable {
+    var condition: String? = "" ) : Parcelable {
 
     fun setWeather(temperature: Int, feelsLike: Int, condition: String) {
         this.temperature = temperature
