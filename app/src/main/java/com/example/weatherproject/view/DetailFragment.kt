@@ -1,22 +1,27 @@
 package com.example.weatherproject.view
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.net.Uri
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Observer
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.example.weatherproject.*
+import com.example.weatherproject.R
 import com.example.weatherproject.databinding.DetailFragmentBinding
 import com.example.weatherproject.model.Weather
-import com.example.weatherproject.viewmodel.*
+import com.example.weatherproject.utils.CITY_IMG_URL
+import com.example.weatherproject.utils.getCondition
+import com.example.weatherproject.utils.getConditionIconUrl
+import com.example.weatherproject.utils.getGradus
+import com.example.weatherproject.viewmodel.AppState
+import com.example.weatherproject.viewmodel.DetailViewModel
+import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.google.android.material.snackbar.Snackbar
+import com.squareup.picasso.Picasso
 
 
 class DetailFragment : Fragment() {
@@ -24,43 +29,11 @@ class DetailFragment : Fragment() {
     private var _binding: DetailFragmentBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: DetailViewModel
-    private val loadResultsReceiver: BroadcastReceiver = object :
-        BroadcastReceiver(){
-        override fun onReceive(context: Context, intent: Intent) {
-            when (intent.getStringExtra(DETAILS_LOAD_RESULT_EXTRA)) {
-                DETAILS_INTENT_EMPTY_EXTRA -> viewModel.setError(DETAILS_INTENT_EMPTY_EXTRA)
-                DETAILS_DATA_EMPTY_EXTRA -> viewModel.setError(DETAILS_DATA_EMPTY_EXTRA)
-                DETAILS_RESPONSE_EMPTY_EXTRA -> viewModel.setError(DETAILS_RESPONSE_EMPTY_EXTRA)
-                DETAILS_REQUEST_ERROR_EXTRA -> viewModel.setError(DETAILS_REQUEST_ERROR_EXTRA)
-                DETAILS_REQUEST_ERROR_MESSAGE_EXTRA -> viewModel.setError(DETAILS_REQUEST_ERROR_MESSAGE_EXTRA)
-                DETAILS_URL_MALFORMED_EXTRA -> viewModel.setError(DETAILS_URL_MALFORMED_EXTRA)
-                DETAILS_RESPONSE_SUCCESS_EXTRA -> viewModel.setLoadWeather(
-                    Weather(temperature = intent.getIntExtra(DETAILS_TEMP_EXTRA, TEMP_INVALID),
-                        feelsLike = intent.getIntExtra(DETAILS_FEELS_LIKE_EXTRA, FEELS_LIKE_INVALID),
-                        condition = intent.getStringExtra(DETAILS_CONDITION_EXTRA)))
-                else -> viewModel.setError(PROCESS_ERROR)
-            }
-        }
-
-    }
-
-
 
     companion object {
         const val BUNDLE_EXTRA = "weather"
 
         fun newInstance(bundle: Bundle? = null) = DetailFragment().apply { this.arguments = bundle }
-
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        context?.let {
-            LocalBroadcastManager.getInstance(it)
-                .registerReceiver(loadResultsReceiver,
-                    IntentFilter(DETAILS_INTENT_FILTER)
-                )
-        }
 
     }
 
@@ -73,36 +46,27 @@ class DetailFragment : Fragment() {
         })
         arguments?.getParcelable<Weather>(BUNDLE_EXTRA)?.let {
             viewModel.loadWeather(it)
-            //viewModel.getWeatherFromRemote()
-            getWeather(it)
+            viewModel.getWeatherFromRemote()
         }
     }
-
-    private fun getWeather(weather: Weather) {
-        viewModel.setLoading()
-        context?.let {
-            it.startService(Intent(it, DetailsService::class.java).apply {
-                putExtra(
-                    LATITUDE_EXTRA,
-                    weather.city.lat
-                )
-                putExtra(
-                    LONGITUDE_EXTRA,
-                    weather.city.lon
-                )
-            })
-        }
-    }
-
-
 
     private fun renderData(appState: AppState) {
         when (appState) {
             is AppState.SuccessCity -> {
                 with(binding) {
-                    weatherCondition.text = appState.weather.condition.toString()
-                    temperatureValue.text = appState.weather.temperature.toString()
-                    feelsLikeValue.text = appState.weather.feelsLike.toString()
+                    Picasso
+                        .get()
+                        .load(CITY_IMG_URL)
+                        .into(headerIcon)
+                    GlideToVectorYou.justLoadImage(
+                        activity,
+                        Uri.parse(getConditionIconUrl(appState.weather.icon)),
+                        weatherImg
+                    )
+
+                    weatherCondition.text = getCondition(appState.weather.condition.toString())
+                    temperatureValue.text = getGradus(appState.weather.temperature)
+                    feelsLikeValue.text = getGradus(appState.weather.feelsLike)
                     cityName.text = appState.weather.city.city.toString()
                     cityCoordinates.text = String.format(
                         getString(R.string.city_coordinates),
@@ -110,20 +74,16 @@ class DetailFragment : Fragment() {
                         appState.weather.city.lon.toString()
                     )
                     detailFragmentLoadingLayout.visibility = View.GONE
-                    mainView.visibility = View.VISIBLE
                 }
             }
             is AppState.Loading -> {
-                binding.mainView.visibility = View.GONE
                 binding.detailFragmentLoadingLayout.visibility = View.VISIBLE
             }
             is AppState.Error -> {
                 binding.detailFragmentLoadingLayout.visibility = View.GONE
                 Snackbar
                     .make(binding.root, "Error", Snackbar.LENGTH_INDEFINITE)
-                    .setAction("Reload") {
-                        getWeather(viewModel.getWeatherFromModel())
-                    }
+                    .setAction("Reload") { viewModel.getWeatherFromRemote()}
                     .show()
             }
         }
@@ -141,10 +101,6 @@ class DetailFragment : Fragment() {
         _binding=null
     }
 
-    override fun onDestroy() {
-        context?.let {
-            LocalBroadcastManager.getInstance(it).unregisterReceiver(loadResultsReceiver)
-        }
-        super.onDestroy()
-    }
+
+
 }

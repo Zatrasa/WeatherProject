@@ -8,7 +8,8 @@ data class FactDTO(
     val temp: Int?,
     val feels_like: Int?,
     val condition: String?,
-    val wind_speed: Double?
+    val wind_speed: Double?,
+    val icon : String?
 )
 
 data class InfoDTO(
