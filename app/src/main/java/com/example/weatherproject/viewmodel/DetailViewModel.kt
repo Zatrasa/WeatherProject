@@ -8,7 +8,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.weatherproject.R
+import com.example.weatherproject.app.App.Companion.getHistoryDao
 import com.example.weatherproject.model.*
+import com.example.weatherproject.room.LocalRepository
+import com.example.weatherproject.room.LocalRepositoryImpl
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
@@ -25,6 +28,9 @@ class DetailViewModel :ViewModel(){
     val liveDataToObserve: MutableLiveData<AppState> = MutableLiveData()
     private val detailsRepositoryImpl: DetailsRepository =
         DetailsRepositoryImpl(RemoteDataSource())
+    private val historyRepository: LocalRepository =
+        LocalRepositoryImpl(getHistoryDao())
+
     private var weather : Weather = Weather()
     private val callBack = object :
         Callback<WeatherDTO> {
@@ -39,6 +45,7 @@ class DetailViewModel :ViewModel(){
                 }
             )
         }
+
         override fun onFailure(call: Call<WeatherDTO>, t: Throwable) {
             liveDataToObserve.postValue(AppState.Error(Throwable(t.message ?:
             "Ошибка запроса на сервер")))
@@ -53,10 +60,16 @@ class DetailViewModel :ViewModel(){
                 weather.setWeather(fact?.temp?:0,
                     fact?.feels_like?:0,
                     fact?.condition?:"",fact?.icon?:"")
+                Thread{saveCityToDB(weather)}.start()
                 AppState.SuccessCity(weather)
             }
         }
     }
+
+    fun saveCityToDB(weather: Weather) {
+        historyRepository.saveEntity(weather)
+    }
+
 
     fun loadWeather(weather:Weather){
         this.weather= weather

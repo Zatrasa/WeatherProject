@@ -1,5 +1,10 @@
 package com.example.weatherproject.utils
 
+import com.example.weatherproject.model.City
+import com.example.weatherproject.model.Weather
+import com.example.weatherproject.room.HistoryEntity
+import java.time.LocalDateTime
+
 fun getCondition(cond : String):String =
     when(cond){
          "clear"-> "ясно"
@@ -31,4 +36,18 @@ fun getGradus(temp: Int):String {
      return if (temp>0) {"+$temp\u00B0"}
      else {"$temp\u00B0"}
 }
+
+fun convertHistoryEntityToWeather(entityList: List<HistoryEntity>):
+        List<Weather> {
+     return entityList.map {
+          Weather(City(it.city, 0.0, 0.0), it.temperature, 0, it.condition)
+     }
+}
+fun convertWeatherToEntity(weather: Weather): HistoryEntity {
+     return HistoryEntity(
+          0, weather.city.city, weather.temperature,
+          weather.condition
+     )
+}
+
 

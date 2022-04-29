@@ -1,6 +1,5 @@
 package com.example.weatherproject.view
 
-import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -73,14 +72,14 @@ class DetailFragment : Fragment() {
                         appState.weather.city.lat.toString(),
                         appState.weather.city.lon.toString()
                     )
-                    detailFragmentLoadingLayout.visibility = View.GONE
+                    detailFragmentLoadingLayout.loadingLayout.visibility = View.GONE
                 }
             }
             is AppState.Loading -> {
-                binding.detailFragmentLoadingLayout.visibility = View.VISIBLE
+                binding.detailFragmentLoadingLayout.loadingLayout.visibility = View.VISIBLE
             }
             is AppState.Error -> {
-                binding.detailFragmentLoadingLayout.visibility = View.GONE
+                binding.detailFragmentLoadingLayout.loadingLayout.visibility = View.GONE
                 Snackbar
                     .make(binding.root, "Error", Snackbar.LENGTH_INDEFINITE)
                     .setAction("Reload") { viewModel.getWeatherFromRemote()}

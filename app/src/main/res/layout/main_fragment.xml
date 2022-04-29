@@ -29,18 +29,11 @@
         app:maxImageSize="@dimen/fab_icon_size" />
 
 
-    <FrameLayout
+    <include
         android:id="@+id/mainFragmentLoadingLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        tools:visibility="visible">
+        layout="@layout/loading_layout"
+        />
 
-        <ProgressBar
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
-    </FrameLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
