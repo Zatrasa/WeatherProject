@@ -1,11 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fragmentBackground"
-    android:fitsSystemWindows="true">
+    android:focusable="true"
+    android:clickable="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+
+        >
+
+        <EditText
+            android:id="@+id/serch_text"
+            android:layout_width="match_parent"
+            android:layout_margin="@dimen/item_margin"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/city_text_size"
+            android:layout_weight="1"
+            android:text="" />
+        <Button
+            android:id="@+id/button_serch"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:text="НАЙТИ"
+            android:textSize="20dp"
+            />
+
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/black"
+        />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/historyFragmentRecyclerview"
         android:layout_width="match_parent"
@@ -17,4 +53,4 @@
         android:id="@+id/includedLoadingLayout"
         layout="@layout/loading_layout"
         tools:visibility="gone"/>
-</FrameLayout>
+</LinearLayout>

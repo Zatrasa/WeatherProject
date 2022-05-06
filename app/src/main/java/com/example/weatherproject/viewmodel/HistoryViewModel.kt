@@ -11,17 +11,32 @@ class HistoryViewModel(
     private val historyRepository: LocalRepository =
             LocalRepositoryImpl(getHistoryDao())
     ) : ViewModel() {
+
         fun getAllHistory() {
-            historyLiveData.value = AppState.Loading
+            //historyLiveData.value = AppState.Loading
+            historyLiveData.postValue(AppState.Loading)
             try {
-               // Thread {
-                    historyLiveData.value =
-                        AppState.Success(historyRepository.getAllHistory())
-              //  }.start()
+                Thread {
+                    historyLiveData.postValue(AppState.Success(historyRepository.getAllHistory()))
+                    //historyLiveData.value =
+
+                }.start()
             }
             catch (e:Exception){
                 historyLiveData.postValue(AppState.Error(e))
             }
-
         }
+
+    fun getSerchHistory(city : String) {
+        historyLiveData.postValue(AppState.Loading)
+        try {
+             Thread {
+                historyLiveData.postValue(AppState.Success(historyRepository.getSerchHistory(city)))
+              }.start()
+        }
+        catch (e:Exception){
+            historyLiveData.postValue(AppState.Error(e))
+        }
+    }
+
     }

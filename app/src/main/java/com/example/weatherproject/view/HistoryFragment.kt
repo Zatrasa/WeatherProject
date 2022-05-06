@@ -34,6 +34,11 @@ class HistoryFragment  : Fragment() {
             viewModel.historyLiveData.observe(viewLifecycleOwner, Observer {
                 renderData(it) })
             viewModel.getAllHistory()
+            binding.buttonSerch.setOnClickListener {
+                if(binding.serchText.text.toString()!=""){
+                    viewModel.getSerchHistory(binding.serchText.text.toString())
+                }
+            }
         }
         private fun renderData(appState: AppState) {
             when (appState) {
